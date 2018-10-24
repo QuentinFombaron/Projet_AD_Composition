@@ -1,0 +1,148 @@
+Number of nodes: 25
+
+------------------------------------------------------
+General Config
+------------------------------------------------------
+Command Line arguments: -project bfs 
+Java VM arguments: -Xmx500m 
+Class path: binaries/bin:binaries/jdom.jar
+------------------------------------------------------
+Configuration settings
+------------------------------------------------------
+ Simulation Area
+    dimensions = 2
+    dimX = 1000
+    dimY = 1000
+    dimZ = 500
+ Simulation
+    asynchronousMode = false
+    mobility = false
+    interference = false
+    interferenceIsAdditive = true
+    canReceiveWhileSending = true
+    canReceiveMultiplePacketsInParallel = true
+    edgeType = projects.bfs.nodes.edges.BidirectionalArete
+    exitOnTerminationInGUI = false
+    initializeConnectionsOnStartup = true
+    refreshRate = 1
+    generateNAckMessages = false
+    handleEmptyEventQueue = true
+    javaCmd = java
+    javaVMmaxMem = 500
+ Random number generators
+    useSameSeedAsInPreviousRun = false
+    useFixedSeed = false
+    fixedSeed = 5012780551010709411
+ Logging
+    logFileName = logfile.txt
+    outputToConsole = true
+    logToTimeDirectory = true
+    logConfiguration = true
+    eagerFlush = false
+ GUI
+    extendedControl = true
+    drawArrows = false
+    zoomStep = 1.2
+    wheelZoomStep = 1.05
+    minZoomFactor = 0.05
+    draw3DGraphNodesInProperOrder = true
+    usePerspectiveView = true
+    perspectiveViewDistance = 40
+ Background map in 2D
+    useMap = false
+    map = images/map.jpg
+ Models
+    DefaultMessageTransmissionModel = FifoRandom
+    DefaultConnectivityModel = UDG
+    DefaultDistributionModel = PositionFile
+    DefaultInterferenceModel = NoInterference
+    DefaultMobilityModel = NoMobility
+    DefaultReliabilityModel = LossyDelivery
+    DefaultNodeImplementation = bfs:bfsNode
+    showModelsOfAllProjects = false
+ Node storage, position transformation
+    guiPositionTransformation2D = sinalgo.gui.transformation.Transformation2D
+    guiPositionTransformation3D = sinalgo.gui.transformation.Transformation3D
+    nodeCollection2D = sinalgo.runtime.nodeCollection.Geometric2DNodeCollection
+    nodeCollection3D = sinalgo.runtime.nodeCollection.Geometric3DNodeCollection
+ Export Settings
+    epsToPdfCommand = epstopdf %s
+    epsDrawDeploymentAreaBoundingBox = true
+    epsDrawBackgroundWhite = true
+ Animation Settings
+    showMessageAnimations = false
+    messageAnimationEnvelopeWidth = 30.0
+    messageAnimationEnvelopeHeight = 20.0
+    messageAnimationEnvelopeColor = r=255,g=255,b=0
+ Diverse Settings
+    showOptimizationHints = true
+    drawEdges = true
+    drawNodes = true
+    shownEventQueueSize = 10
+    outputTextFieldHeight = 200
+    arrowLength = 8
+    arrowWidth = 1
+    defaultRoundNumber = 1
+------------------------------------------------------
+Custom settings
+------------------------------------------------------
+ fiforandom/distribution = Exponential
+ fiforandom/lambda = 1
+ geometricnodecollection/rmax = 350
+ lossydelivery/droprate = 0.1
+ node/defaultsize = 30
+ qudg/connectionprobability = 0.6
+ qudg/probabilitytype = constant
+ qudg/rmax = 50
+ qudg/rmin = 30
+ randomdirection/movetime/distribution = Uniform
+ randomdirection/movetime/max = 20
+ randomdirection/movetime/min = 5
+ randomdirection/nodespeed/distribution = Gaussian
+ randomdirection/nodespeed/mean = 10
+ randomdirection/nodespeed/variance = 20
+ randomdirection/waitingtime/distribution = Poisson
+ randomdirection/waitingtime/lambda = 10
+ randomwaypoint/speed/distribution = Gaussian
+ randomwaypoint/speed/mean = 10
+ randomwaypoint/speed/variance = 20
+ randomwaypoint/waitingtime/distribution = Poisson
+ randomwaypoint/waitingtime/lambda = 10
+ sinr/alpha = 2
+ sinr/beta = 0.7
+ sinr/noise = 0
+ udg/rmax = 350
+------------------------------------------------------
+Seed for Random Number Generators
+------------------------------------------------------
+ Randomly selected seed: 5012780551010709411
+------------------------------------------------------
+End of settings
+------------------------------------------------------
+
+#####----- start of node posiitons -----#####
+485.59670781893004, 67.21536351165982, 0.0
+865.5692729766804, 893.0041152263375, 0.0
+101.50891632373114, 919.0672153635117, 0.0
+113.85459533607683, 244.17009602194787, 0.0
+891.6323731138547, 235.93964334705075, 0.0
+768.1755829903979, 776.4060356652949, 0.0
+914.9519890260631, 721.5363511659808, 0.0
+972.5651577503429, 862.8257887517148, 0.0
+692.7297668038409, 910.8367626886146, 0.0
+251.02880658436214, 905.3497942386831, 0.0
+175.58299039780522, 748.9711934156379, 0.0
+35.66529492455418, 753.0864197530865, 0.0
+212.62002743484226, 329.2181069958848, 0.0
+74.07407407407408, 366.2551440329218, 0.0
+72.70233196159123, 94.65020576131687, 0.0
+130.31550068587106, 470.5075445816187, 0.0
+126.2002743484225, 598.079561042524, 0.0
+869.684499314129, 334.7050754458162, 0.0
+773.6625514403293, 148.14814814814815, 0.0
+891.6323731138547, 484.2249657064472, 0.0
+790.1234567901234, 581.6186556927298, 0.0
+625.5144032921811, 182.4417009602195, 0.0
+502.0576131687243, 240.05486968449932, 0.0
+305.8984910836763, 108.3676268861454, 0.0
+370.3703703703704, 304.5267489711934, 0.0
