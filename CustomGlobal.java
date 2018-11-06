@@ -39,7 +39,10 @@ package projects.comp;
 
 import javax.swing.JOptionPane;
 
+import projects.comp.nodes.nodeImplementations.CompNode;
+import sinalgo.nodes.Node;
 import sinalgo.runtime.AbstractCustomGlobal;
+import sinalgo.tools.Tools;
 
 /**
  * This class holds customized global state and methods for the framework. 
@@ -63,11 +66,21 @@ import sinalgo.runtime.AbstractCustomGlobal;
  * added to the GUI. 
  */
 public class CustomGlobal extends AbstractCustomGlobal{
-	
+
 	/* (non-Javadoc)
 	 * @see runtime.AbstractCustomGlobal#hasTerminated()
 	 */
 	public boolean hasTerminated() {
+		boolean fin = true;
+		for (Node b : Tools.getNodeList()){
+			CompNode n = (CompNode) b;
+			if (!(n.ID != 1 && n.lvl == n.etatVoisins[n.getIndex(n.pere)].getVoisinLvl() + 1))
+			    fin = false;
+		}
+
+		if(fin)
+			Tools.stopSimulation();
+
 		return false;
 	}
 

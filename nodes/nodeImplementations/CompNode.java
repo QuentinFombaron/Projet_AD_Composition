@@ -16,14 +16,15 @@ import sinalgo.nodes.messages.Message;
 import sinalgo.tools.Tools;
 
 public class CompNode extends Node {
-    private int lvl;
+    public int lvl;
 
-    private int pere;
+    /* Father ID */
+    public int pere;
 
     private int value = (int) (Math.random() * 100);
     private boolean racine;
 
-    private int Voisins[];
+    public EtatVoisin etatVoisins[];
 
     public void preStep() {
     }
@@ -33,20 +34,19 @@ public class CompNode extends Node {
     }
 
     public int getPere() {
-        return pere;
+        return this.pere;
     }
 
     public void start() {
-        if (this.ID == 1) {
-            this.racine = true;
-        } else {
-            this.racine = false;
-        }
+        this.racine = (this.ID == 1);
 
+        this.lvl = (int) (Math.random() * nbNoeuds());
+
+        etatVoisins = new EtatVoisin[this.nbVoisins()];
         if (this.nbVoisins() > 0) {
-            this.Voisins = new int[this.nbVoisins()];
-            for (int i = 0; i < this.nbVoisins(); i++)
-                this.Voisins[i] = CompNode.nbNoeuds();
+            for (int i = 0; i < this.nbVoisins(); i++) {
+                this.etatVoisins[i] = new EtatVoisin(getVoisin(i), (int) (Math.random() * nbNoeuds()));
+            }
         }
         (new waitTimer()).startRelative(20, this);
     }
@@ -56,7 +56,7 @@ public class CompNode extends Node {
             Message m = inbox.next();
             if (m instanceof CompMessage) {
                 CompMessage msg = (CompMessage) m;
-                this.Voisins[this.getIndex(msg.ID)] = msg.d;
+                this.etatVoisins[this.getIndex(msg.ID)].setVoisinLvl(msg.d);
             }
         }
         this.Actions();
@@ -72,11 +72,11 @@ public class CompNode extends Node {
     public void draw(Graphics g, PositionTransformation pt, boolean highlight) {
         this.setColor(Color.ORANGE);
 
-        String text = String.valueOf(this.ID);
+        String text = String.valueOf(this.ID+":"+this.lvl+"["+this.pere+"]");
         super.drawNodeAsDiskWithText(g, pt, highlight, text, 20, Color.black);
     }
 
-    private int getIndex(int ID) {
+    public int getIndex(int ID) {
         int j = 0;
         for (Edge e : this.outgoingConnections) {
             if (e.endNode.ID == ID)
@@ -99,7 +99,7 @@ public class CompNode extends Node {
         return iter.next().endNode.ID;
     }
 
-    private int nbVoisins() {
+    public int nbVoisins() {
         if (this.outgoingConnections == null) return 0;
         return this.outgoingConnections.size();
     }
@@ -111,53 +111,45 @@ public class CompNode extends Node {
 
     private int minimum() {
         int min = CompNode.nbNoeuds();
-        for (int lvl : Voisins) {
-            min = Math.min(min, lvl);
+        for (EtatVoisin e : etatVoisins) {
+            min = Math.min(min, e.getVoisinLvl());
         }
         return min;
     }
 
     private boolean R0() {
-        return this.lvl != nbNoeuds() && this.lvl != (etatVoisins[pere].getVoisinLvl() + 1) && etatVoisins[pere].getVoisinLvl() != nbNoeuds();
+        return this.lvl != nbNoeuds() && this.lvl != (etatVoisins[getIndex(pere)].getVoisinLvl() + 1) && etatVoisins[getIndex(pere)].getVoisinLvl() != nbNoeuds();
     }
 
     private boolean R1() {
-        return this.lvl != nbNoeuds() && etatVoisins[pere].getVoisinLvl() == nbNoeuds();
+        return this.lvl != nbNoeuds() && etatVoisins[getIndex(pere)].getVoisinLvl() == nbNoeuds();
     }
 
-    private  boolean R2() {
-        boolean result = false;
-        for (int v: Voisins) {
-            if (this.lvl == nbNoeuds() && etatVoisins[v].getVoisinLvl() < (nbNoeuds() - 1)) {
-                result = true;
+    private int R2() {
+        int result = -1;
+        for (EtatVoisin e : etatVoisins) {
+            if (this.lvl == nbNoeuds() && e.getVoisinLvl() < (nbNoeuds() - 1)) {
+                return e.getVoisinID();
             }
         }
         return result;
     }
-
-    /*
-    private boolean CD() {
-        return this.lvl!= (minimum() + 1);
-    }
-
-    private boolean CP() {
-        return minimum() == (this.lvl- 1) && Voisins[pere] != (this.lvl- 1);
-    }
-    */
 
     private void Actions() {
         if (this.racine) {
             this.pere = -1;
             this.lvl = 0;
         } else {
-            if (this.CD())
-                this.lvl = minimum() + 1;
-            if (this.CP()) {
-                for (int i = 0; i < this.nbVoisins(); i++) {
-                    if (this.lvl - 1 == Voisins[i]) {
-                        pere = i;
-                    }
-                }
+            int idR2 = this.R2();
+            if (this.R0()) {
+                this.lvl = etatVoisins[getIndex(pere)].getVoisinLvl() + 1;
+            }
+            if (this.R1()) {
+                this.lvl = nbNoeuds();
+            }
+            if (idR2 != -1) {
+                this.lvl = this.etatVoisins[getIndex(idR2)].getVoisinLvl() + 1;
+                this.pere = this.etatVoisins[getIndex(idR2)].getVoisinID();
             }
         }
     }

@@ -16,4 +16,8 @@ public class EtatVoisin {
     public int getVoisinLvl() {
         return lvl;
     }
+
+    public void setVoisinLvl(int lvl) {
+        this.lvl = lvl;
+    }
 }
