@@ -2,7 +2,10 @@ package projects.comp.nodes.nodeImplementations;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
 
 import projects.comp.nodes.messages.CompMessage;
 import projects.comp.nodes.timers.initTimer;
@@ -40,12 +43,15 @@ public class CompNode extends Node {
     public void start() {
         this.racine = (this.ID == 1);
 
-        this.lvl = (int) (Math.random() * nbNoeuds());
 
-        etatVoisins = new EtatVoisin[this.nbVoisins()];
+        this.lvl = this.ID;
+        System.out.println(this.ID + ":" + this.lvl);
+
         if (this.nbVoisins() > 0) {
+            etatVoisins = new EtatVoisin[this.nbVoisins()];
             for (int i = 0; i < this.nbVoisins(); i++) {
-                this.etatVoisins[i] = new EtatVoisin(getVoisin(i), (int) (Math.random() * nbNoeuds()));
+                this.etatVoisins[i] = new EtatVoisin(getVoisin(i), getVoisin(i));
+                //System.out.println("ID:"+this.ID+"-> VoisinID:"+this.etatVoisins[i].getVoisinID()+" + VoisinLvl:"+this.etatVoisins[i].getVoisinLvl());
             }
         }
         (new waitTimer()).startRelative(20, this);
@@ -90,7 +96,7 @@ public class CompNode extends Node {
         return Tools.getNodeList().size();
     }
 
-    public int getVoisin(int indice) {
+    private int getVoisin(int indice) {
         if (indice >= this.nbVoisins() || indice < 0)
             return this.ID;
         Iterator<Edge> iter = this.outgoingConnections.iterator();
@@ -99,7 +105,7 @@ public class CompNode extends Node {
         return iter.next().endNode.ID;
     }
 
-    public int nbVoisins() {
+    private int nbVoisins() {
         if (this.outgoingConnections == null) return 0;
         return this.outgoingConnections.size();
     }
@@ -140,16 +146,16 @@ public class CompNode extends Node {
             this.pere = -1;
             this.lvl = 0;
         } else {
-            int idR2 = this.R2();
             if (this.R0()) {
                 this.lvl = etatVoisins[getIndex(pere)].getVoisinLvl() + 1;
             }
             if (this.R1()) {
                 this.lvl = nbNoeuds();
             }
+            int idR2 = this.R2();
             if (idR2 != -1) {
-                this.lvl = this.etatVoisins[getIndex(idR2)].getVoisinLvl() + 1;
                 this.pere = this.etatVoisins[getIndex(idR2)].getVoisinID();
+                this.lvl = this.etatVoisins[getIndex(idR2)].getVoisinLvl() + 1;
             }
         }
     }

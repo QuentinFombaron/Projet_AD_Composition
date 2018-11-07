@@ -38,6 +38,7 @@ package projects.comp;
 
 
 import javax.swing.JOptionPane;
+import javax.swing.plaf.synth.SynthTextAreaUI;
 
 import projects.comp.nodes.nodeImplementations.CompNode;
 import sinalgo.nodes.Node;
@@ -74,12 +75,19 @@ public class CustomGlobal extends AbstractCustomGlobal{
 		boolean fin = true;
 		for (Node b : Tools.getNodeList()){
 			CompNode n = (CompNode) b;
-			if (!(n.ID != 1 && n.lvl == n.etatVoisins[n.getIndex(n.pere)].getVoisinLvl() + 1))
-			    fin = false;
+            //System.out.println(n.ID+":"+n.lvl+"=="+(n.etatVoisins[n.getIndex(n.getPere())].getVoisinLvl() + 1)+"?");
+            if (n.ID != 1) {
+                if (n.pere == 0 || n.lvl != (n.etatVoisins[n.getIndex(n.getPere())].getVoisinLvl() + 1)) {
+                    fin = false;
+                }
+            }
 		}
 
-		if(fin)
-			Tools.stopSimulation();
+		if(fin) {
+            Tools.stopSimulation();
+            System.out.println("FIN");
+        }
+
 
 		return false;
 	}
