@@ -2,10 +2,7 @@ package projects.comp.nodes.nodeImplementations;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
 
 import projects.comp.nodes.messages.CompMessage;
 import projects.comp.nodes.timers.initTimer;
@@ -19,149 +16,204 @@ import sinalgo.nodes.messages.Message;
 import sinalgo.tools.Tools;
 
 public class CompNode extends Node {
-    public int lvl;
+	/* If node is root, racine == true */
+	private boolean racine;
 
-    /* Father ID */
-    public int pere;
+	/* The node level */
+	private int lvl;
 
-    private int value = (int) (Math.random() * 100);
-    private boolean racine;
+	/* Father ID */
+	private int pere;
 
-    public EtatVoisin etatVoisins[];
+	/* Node's value e */
+	private int e = (int) (Math.random() * 100);
 
-    public void preStep() {
-    }
+	/* Max of the sub tree */
+	private int max_subtree = e;
 
-    public void init() {
-        (new initTimer()).startRelative(1, this);
-    }
+	/* Array of the Neighbors state (ID, lvl, Value, son) */
+	private EtatVoisin etatVoisins[];
 
-    public int getPere() {
-        return this.pere;
-    }
+	private int sortie;
 
-    public void start() {
-        this.racine = (this.ID == 1);
+	public boolean getRacine() {
+		return this.racine;
+	}
 
+	public int getLvl() {
+		return this.lvl;
+	}
 
-        this.lvl = this.ID;
-        System.out.println(this.ID + ":" + this.lvl);
+	public int getPere() {
+		return this.pere;
+	}
 
-        if (this.nbVoisins() > 0) {
-            etatVoisins = new EtatVoisin[this.nbVoisins()];
-            for (int i = 0; i < this.nbVoisins(); i++) {
-                this.etatVoisins[i] = new EtatVoisin(getVoisin(i), getVoisin(i));
-                //System.out.println("ID:"+this.ID+"-> VoisinID:"+this.etatVoisins[i].getVoisinID()+" + VoisinLvl:"+this.etatVoisins[i].getVoisinLvl());
-            }
-        }
-        (new waitTimer()).startRelative(20, this);
-    }
+	public EtatVoisin getEtatVoisins(int i) {
+		if (i > 0 && i < nbVoisins()) {
+			return this.etatVoisins[i];
+		}
+		return null;
+	}
 
-    public void handleMessages(Inbox inbox) {
-        while (inbox.hasNext()) {
-            Message m = inbox.next();
-            if (m instanceof CompMessage) {
-                CompMessage msg = (CompMessage) m;
-                this.etatVoisins[this.getIndex(msg.ID)].setVoisinLvl(msg.d);
-            }
-        }
-        this.Actions();
-    }
+	public void preStep() {
+	}
 
-    public void postStep() {
-    }
+	public void init() {
+		(new initTimer()).startRelative(1, this);
+	}
 
-    public void checkRequirements() throws
-            WrongConfigurationException {
-    }
+	public void start() {
 
-    public void draw(Graphics g, PositionTransformation pt, boolean highlight) {
-        this.setColor(Color.ORANGE);
+		/* The node with ID == 1 will be considered as root */
+		this.racine = (this.ID == 1);
 
-        String text = String.valueOf(this.ID+":"+this.lvl+"["+this.pere+"]");
-        super.drawNodeAsDiskWithText(g, pt, highlight, text, 20, Color.black);
-    }
+		/* Init it lvl at a random value between 0 and nbNoeuds */
+		this.lvl = (int) (Math.random() * (CompNode.nbNoeuds() + 1));
 
-    public int getIndex(int ID) {
-        int j = 0;
-        for (Edge e : this.outgoingConnections) {
-            if (e.endNode.ID == ID)
-                return j;
-            j++;
-        }
-        return 0;
-    }
+		/* Init the array of the neighbors state if the node has neighbors */
+		if (this.nbVoisins() > 0) {
+			etatVoisins = new EtatVoisin[this.nbVoisins()];
+			for (int i = 0; i < this.nbVoisins(); i++) {
+				this.etatVoisins[i] = new EtatVoisin(getVoisin(i));
+			}
+		}
 
-    private static int nbNoeuds() {
-        return Tools.getNodeList().size();
-    }
+		/* Get a pere randomly in the neighbors */
+		this.pere = this.etatVoisins[(int) (Math.random() * nbVoisins())].getVoisinID();
 
-    private int getVoisin(int indice) {
-        if (indice >= this.nbVoisins() || indice < 0)
-            return this.ID;
-        Iterator<Edge> iter = this.outgoingConnections.iterator();
-        for (int j = 0; j < indice; j++)
-            iter.next();
-        return iter.next().endNode.ID;
-    }
+		(new waitTimer()).startRelative(20, this);
+	}
 
-    private int nbVoisins() {
-        if (this.outgoingConnections == null) return 0;
-        return this.outgoingConnections.size();
-    }
+	public void handleMessages(Inbox inbox) {
+		while (inbox.hasNext()) {
+			Message m = inbox.next();
+			if (m instanceof CompMessage) {
+				CompMessage msg = (CompMessage) m;
+				int neighbors_ID = this.getIndex(msg.ID);
+				this.etatVoisins[neighbors_ID].updateValues(msg.lvl, msg.max, msg.pere == this.ID, msg.sortie);
+			}
+		}
+		this.Actions();
+	}
 
-    public void envoi() {
-        this.broadcast(new CompMessage(this.ID, this.lvl));
-        (new waitTimer()).startRelative(20, this);
-    }
+	public void postStep() {
+	}
 
-    private int minimum() {
-        int min = CompNode.nbNoeuds();
-        for (EtatVoisin e : etatVoisins) {
-            min = Math.min(min, e.getVoisinLvl());
-        }
-        return min;
-    }
+	public void checkRequirements() throws WrongConfigurationException {
+	}
 
-    private boolean R0() {
-        return this.lvl != nbNoeuds() && this.lvl != (etatVoisins[getIndex(pere)].getVoisinLvl() + 1) && etatVoisins[getIndex(pere)].getVoisinLvl() != nbNoeuds();
-    }
+	public void draw(Graphics g, PositionTransformation pt, boolean highlight) {
+		this.setColor(Color.ORANGE);
 
-    private boolean R1() {
-        return this.lvl != nbNoeuds() && etatVoisins[getIndex(pere)].getVoisinLvl() == nbNoeuds();
-    }
+		String text = String
+				.valueOf(this.ID + ":" + this.lvl + "[" + this.pere + "]" + this.e + ":" + this.max_subtree + ":" + this.sortie);
+		super.drawNodeAsDiskWithText(g, pt, highlight, text, 20, Color.black);
+	}
 
-    private int R2() {
-        int result = -1;
-        for (EtatVoisin e : etatVoisins) {
-            if (this.lvl == nbNoeuds() && e.getVoisinLvl() < (nbNoeuds() - 1)) {
-                return e.getVoisinID();
-            }
-        }
-        return result;
-    }
+	public static int nbNoeuds() {
+		return Tools.getNodeList().size();
+	}
 
-    private void Actions() {
-        if (this.racine) {
-            this.pere = -1;
-            this.lvl = 0;
-        } else {
-            if (this.R0()) {
-                this.lvl = etatVoisins[getIndex(pere)].getVoisinLvl() + 1;
-            }
-            if (this.R1()) {
-                this.lvl = nbNoeuds();
-            }
-            int idR2 = this.R2();
-            if (idR2 != -1) {
-                this.pere = this.etatVoisins[getIndex(idR2)].getVoisinID();
-                this.lvl = this.etatVoisins[getIndex(idR2)].getVoisinLvl() + 1;
-            }
-        }
-    }
+	public int getIndex(int ID) {
+		int j = 0;
+		for (Edge e : this.outgoingConnections) {
+			if (e.endNode.ID == ID)
+				return j;
+			j++;
+		}
+		return 0;
+	}
 
-    @Override
-    public void neighborhoodChange() {
+	private int getVoisin(int indice) {
+		if (indice >= this.nbVoisins() || indice < 0)
+			return this.ID;
+		Iterator<Edge> iter = this.outgoingConnections.iterator();
+		for (int j = 0; j < indice; j++)
+			iter.next();
+		return iter.next().endNode.ID;
+	}
 
-    }
+	private int nbVoisins() {
+		if (this.outgoingConnections == null)
+			return 0;
+		return this.outgoingConnections.size();
+	}
+
+	public void envoi() {
+		this.broadcast(new CompMessage(this.ID, this.lvl, this.max_subtree, this.pere, this.sortie));
+		(new waitTimer()).startRelative(20, this);
+	}
+
+	private int maximumValue() {
+		int max = e;
+		for (EtatVoisin e : etatVoisins) {
+			if (e.getVoisinIsFils()) {
+				max = Math.max(max, e.getVoisinMax());
+			}
+		}
+		return max;
+	}
+
+	private boolean R0() {
+		return this.lvl != nbNoeuds() && this.lvl != (etatVoisins[getIndex(pere)].getVoisinLvl() + 1)
+				&& etatVoisins[getIndex(pere)].getVoisinLvl() != nbNoeuds();
+	}
+
+	private boolean R1() {
+		return this.lvl != nbNoeuds() && etatVoisins[getIndex(pere)].getVoisinLvl() == nbNoeuds();
+	}
+
+	private int R2() {
+		int result = -1;
+		for (EtatVoisin e : etatVoisins) {
+			if (this.lvl == nbNoeuds() && e.getVoisinLvl() < (nbNoeuds() - 1)) {
+				return e.getVoisinID();
+			}
+		}
+		return result;
+	}
+
+	private boolean MSA() {
+		return maximumValue() != this.max_subtree;
+	}
+
+	private boolean Max() {
+		if (this.racine) {
+			return this.max_subtree != this.sortie;
+		}
+		return this.sortie != this.etatVoisins[getIndex(pere)].getVoisinSortie();
+	}
+
+	private void Actions() {
+		if (this.racine) {
+			this.pere = -1;
+			this.lvl = 0;
+			if (MSA()) {
+				this.max_subtree = maximumValue();
+			} else if (Max()){
+				this.sortie = this.max_subtree;
+			}
+		} else {
+			if (this.R0()) {
+				this.lvl = etatVoisins[getIndex(pere)].getVoisinLvl() + 1;
+			} else if (this.R1()) {
+				this.lvl = nbNoeuds();
+			} else {
+				int idR2 = this.R2();
+				if (idR2 != -1) {
+					this.pere = this.etatVoisins[getIndex(idR2)].getVoisinID();
+					this.lvl = this.etatVoisins[getIndex(idR2)].getVoisinLvl() + 1;
+				} else if (MSA()) {
+					this.max_subtree = maximumValue();
+				} else if (Max()) {
+					this.sortie = this.etatVoisins[getIndex(pere)].getVoisinSortie();
+				}
+			}
+		}
+	}
+
+	@Override
+	public void neighborhoodChange() {
+
+	}
 }

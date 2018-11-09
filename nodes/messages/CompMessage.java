@@ -4,14 +4,20 @@ import sinalgo.nodes.messages.Message;
 
 public class CompMessage extends Message {
     public int ID;
-    public int d;
+    public int lvl;
+    public int max;
+    public int pere;
+    public int sortie;
 
-    public CompMessage(int ID, int d) {
+    public CompMessage(int ID, int lvl, int max, int pere, int sortie) {
         this.ID = ID;
-        this.d = d;
+        this.lvl = lvl;
+        this.max = max;
+        this.pere = pere;
+        this.sortie = sortie;
     }
 
     public Message clone() {
-        return new CompMessage(ID, d);
+        return new CompMessage(ID, lvl, max, pere, sortie);
     }
 }
