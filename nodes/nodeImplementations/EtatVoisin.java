@@ -10,6 +10,7 @@ public class EtatVoisin {
 	EtatVoisin(int ID) {
 		this.ID = ID;
 		this.lvl = (int) (Math.random() * (CompNode.nbNoeuds() + 1));
+
 		this.max = (int) (Math.random() * 100);
 		/*
 		 * We get randomly a number between 0 and 1, if this number is 1 then

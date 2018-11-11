@@ -49,7 +49,7 @@ public class CompNode extends Node {
 	}
 
 	public EtatVoisin getEtatVoisins(int i) {
-		if (i > 0 && i < nbVoisins()) {
+		if (i >= 0 && i < nbVoisins()) {
 			return this.etatVoisins[i];
 		}
 		return null;
@@ -133,7 +133,7 @@ public class CompNode extends Node {
 		return iter.next().endNode.ID;
 	}
 
-	private int nbVoisins() {
+	public int nbVoisins() {
 		if (this.outgoingConnections == null)
 			return 0;
 		return this.outgoingConnections.size();
@@ -146,7 +146,7 @@ public class CompNode extends Node {
 
 	private int maximumValue() {
 		int max = e;
-		for (EtatVoisin e : etatVoisins) {
+		for (EtatVoisin e : this.etatVoisins) {
 			if (e.getVoisinIsFils()) {
 				max = Math.max(max, e.getVoisinMax());
 			}
@@ -155,17 +155,17 @@ public class CompNode extends Node {
 	}
 
 	private boolean R0() {
-		return this.lvl != nbNoeuds() && this.lvl != (etatVoisins[getIndex(pere)].getVoisinLvl() + 1)
+		return this.lvl != nbNoeuds() && this.lvl != (this.etatVoisins[getIndex(this.pere)].getVoisinLvl() + 1)
 				&& etatVoisins[getIndex(pere)].getVoisinLvl() != nbNoeuds();
 	}
 
 	private boolean R1() {
-		return this.lvl != nbNoeuds() && etatVoisins[getIndex(pere)].getVoisinLvl() == nbNoeuds();
+		return this.lvl != nbNoeuds() &&this. etatVoisins[getIndex(this.pere)].getVoisinLvl() == nbNoeuds();
 	}
 
 	private int R2() {
 		int result = -1;
-		for (EtatVoisin e : etatVoisins) {
+		for (EtatVoisin e : this.etatVoisins) {
 			if (this.lvl == nbNoeuds() && e.getVoisinLvl() < (nbNoeuds() - 1)) {
 				return e.getVoisinID();
 			}
@@ -195,7 +195,7 @@ public class CompNode extends Node {
 			}
 		} else {
 			if (this.R0()) {
-				this.lvl = etatVoisins[getIndex(pere)].getVoisinLvl() + 1;
+				this.lvl = this.etatVoisins[getIndex(this.pere)].getVoisinLvl() + 1;
 			} else if (this.R1()) {
 				this.lvl = nbNoeuds();
 			} else {
@@ -206,7 +206,7 @@ public class CompNode extends Node {
 				} else if (MSA()) {
 					this.max_subtree = maximumValue();
 				} else if (Max()) {
-					this.sortie = this.etatVoisins[getIndex(pere)].getVoisinSortie();
+					this.sortie = this.etatVoisins[getIndex(this.pere)].getVoisinSortie();
 				}
 			}
 		}
