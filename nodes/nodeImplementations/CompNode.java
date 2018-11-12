@@ -28,12 +28,13 @@ public class CompNode extends Node {
 	/* Node's value e */
 	private int e = (int) (Math.random() * 100);
 
-	/* Max of the sub tree */
+	/* Max (in e values) of the node's sub tree */
 	private int max_subtree = e;
 
 	/* Array of the Neighbors state (ID, lvl, Value, son) */
 	private EtatVoisin etatVoisins[];
 
+	/* Output of the algorithm */
 	private int sortie;
 
 	public boolean getRacine() {
@@ -53,6 +54,14 @@ public class CompNode extends Node {
 			return this.etatVoisins[i];
 		}
 		return null;
+	}
+
+	public int getMax_SubTree() {
+		return this.max_subtree;
+	}
+
+	public int getSortie() {
+		return this.sortie;
 	}
 
 	public void preStep() {
@@ -90,6 +99,7 @@ public class CompNode extends Node {
 			if (m instanceof CompMessage) {
 				CompMessage msg = (CompMessage) m;
 				int neighbors_ID = this.getIndex(msg.ID);
+				// Update the state of the neighbor with the value sent
 				this.etatVoisins[neighbors_ID].updateValues(msg.lvl, msg.max, msg.pere == this.ID, msg.sortie);
 			}
 		}
@@ -105,8 +115,8 @@ public class CompNode extends Node {
 	public void draw(Graphics g, PositionTransformation pt, boolean highlight) {
 		this.setColor(Color.ORANGE);
 
-		String text = String
-				.valueOf(this.ID + ":" + this.lvl + "[" + this.pere + "]" + this.e + ":" + this.max_subtree + ":" + this.sortie);
+		String text = String.valueOf(
+				this.ID + ":" + this.lvl + "[" + this.pere + "]" + this.e + ":" + this.max_subtree + ":" + this.sortie);
 		super.drawNodeAsDiskWithText(g, pt, highlight, text, 20, Color.black);
 	}
 
@@ -144,7 +154,7 @@ public class CompNode extends Node {
 		(new waitTimer()).startRelative(20, this);
 	}
 
-	private int maximumValue() {
+	public int maximumValue() {
 		int max = e;
 		for (EtatVoisin e : this.etatVoisins) {
 			if (e.getVoisinIsFils()) {
@@ -160,7 +170,7 @@ public class CompNode extends Node {
 	}
 
 	private boolean R1() {
-		return this.lvl != nbNoeuds() &&this. etatVoisins[getIndex(this.pere)].getVoisinLvl() == nbNoeuds();
+		return this.lvl != nbNoeuds() && this.etatVoisins[getIndex(this.pere)].getVoisinLvl() == nbNoeuds();
 	}
 
 	private int R2() {
@@ -190,7 +200,7 @@ public class CompNode extends Node {
 			this.lvl = 0;
 			if (MSA()) {
 				this.max_subtree = maximumValue();
-			} else if (Max()){
+			} else if (Max()) {
 				this.sortie = this.max_subtree;
 			}
 		} else {

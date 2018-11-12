@@ -60,18 +60,18 @@ import sinalgo.tools.Tools;
  * </ul>
  *
  * @see AbstractCustomGlobal for more details. <br>
- * In addition, this class also provides the possibility to extend the
- * framework with custom methods that can be called either through the menu
- * or via a button that is added to the GUI.
+ *      In addition, this class also provides the possibility to extend the
+ *      framework with custom methods that can be called either through the menu
+ *      or via a button that is added to the GUI.
  */
 public class CustomGlobal extends AbstractCustomGlobal {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see runtime.AbstractCustomGlobal#hasTerminated()
-     */
-    public boolean hasTerminated() {
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see runtime.AbstractCustomGlobal#hasTerminated()
+	 */
+	public boolean hasTerminated() {
         boolean fin = true;
         for (Node b : Tools.getNodeList()) {
             CompNode n = (CompNode) b;
@@ -85,6 +85,14 @@ public class CustomGlobal extends AbstractCustomGlobal {
             }
 
             if (!n.getRacine() && n.getLvl() != (n.getEtatVoisins(n.getIndex(n.getPere())).getVoisinLvl() + 1)) {
+            	System.out.println("1");
+                
+            	fin = false;
+            } else if (n.maximumValue() != n.getMax_SubTree()) {
+            	System.out.println("2");
+                fin = false;
+            } else if ((!n.getRacine() && n.getSortie() != n.getEtatVoisins(n.getIndex(n.getPere())).getVoisinSortie()) || (n.getRacine() && n.getSortie() != n.maximumValue())) {
+            	System.out.println("3");
                 fin = false;
             }
         }
@@ -97,27 +105,27 @@ public class CustomGlobal extends AbstractCustomGlobal {
         return false;
     }
 
-    /**
-     * An example of a method that will be available through the menu of the
-     * GUI.
-     */
-    @GlobalMethod(menuText = "Echo")
-    public void echo() {
-        // Query the user for an input
-        String answer = JOptionPane.showInputDialog(null, "This is an example.\nType in any text to echo.");
-        // Show an information message
-        JOptionPane.showMessageDialog(null, "You typed '" + answer + "'", "Example Echo",
-                JOptionPane.INFORMATION_MESSAGE);
-    }
+	/**
+	 * An example of a method that will be available through the menu of the
+	 * GUI.
+	 */
+	@GlobalMethod(menuText = "Echo")
+	public void echo() {
+		// Query the user for an input
+		String answer = JOptionPane.showInputDialog(null, "This is an example.\nType in any text to echo.");
+		// Show an information message
+		JOptionPane.showMessageDialog(null, "You typed '" + answer + "'", "Example Echo",
+				JOptionPane.INFORMATION_MESSAGE);
+	}
 
-    /**
-     * An example to add a button to the user interface. In this sample, the
-     * button is labeled with a text 'GO'. Alternatively, you can specify an
-     * icon that is shown on the button. See AbstractCustomGlobal.CustomButton
-     * for more details.
-     */
-    @CustomButton(buttonText = "GO", toolTipText = "A sample button")
-    public void sampleButton() {
-        JOptionPane.showMessageDialog(null, "You Pressed the 'GO' button.");
-    }
+	/**
+	 * An example to add a button to the user interface. In this sample, the
+	 * button is labeled with a text 'GO'. Alternatively, you can specify an
+	 * icon that is shown on the button. See AbstractCustomGlobal.CustomButton
+	 * for more details.
+	 */
+	@CustomButton(buttonText = "GO", toolTipText = "A sample button")
+	public void sampleButton() {
+		JOptionPane.showMessageDialog(null, "You Pressed the 'GO' button.");
+	}
 }
