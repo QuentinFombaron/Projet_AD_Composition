@@ -39,14 +39,6 @@ public class EtatVoisin {
 		return sortie;
 	}
 
-	public void setVoisinLvl(int lvl) {
-		this.lvl = lvl;
-	}
-
-	public void setVoisinIsFils(boolean bool) {
-		this.isfils = bool;
-	}
-
 	public void updateValues(int lvl, int max, boolean b, int sortie) {
 		this.lvl = lvl;
 		this.max = max;

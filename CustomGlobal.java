@@ -85,14 +85,11 @@ public class CustomGlobal extends AbstractCustomGlobal {
             }
 
             if (!n.getRacine() && n.getLvl() != (n.getEtatVoisins(n.getIndex(n.getPere())).getVoisinLvl() + 1)) {
-            	System.out.println("1");
-                
             	fin = false;
             } else if (n.maximumValue() != n.getMax_SubTree()) {
-            	System.out.println("2");
                 fin = false;
-            } else if ((!n.getRacine() && n.getSortie() != n.getEtatVoisins(n.getIndex(n.getPere())).getVoisinSortie()) || (n.getRacine() && n.getSortie() != n.maximumValue())) {
-            	System.out.println("3");
+            } else if ((!n.getRacine() && n.getSortie() != n.getEtatVoisins(n.getIndex(n.getPere())).getVoisinSortie())
+                    || (n.getRacine() && n.getSortie() != n.maximumValue())) {
                 fin = false;
             }
         }
